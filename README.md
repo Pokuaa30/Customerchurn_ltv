@@ -1,108 +1,90 @@
-Markdown
 # 📊 E-Commerce Customer Churn & LTV Predictive Analytics Model
 
 An end-to-end customer analytics and machine learning pipeline that processes transactional e-commerce data, computes **Recency-Frequency-Monetary (RFM)** behavioral metrics, trains supervised classification models to predict customer churn, and deploys an interactive **Streamlit** dashboard for executive decision-making.
 
 ---
 
-## 📌 Project Overview & Architecture
+## 📌 Business Overview & Problem Statement
 
-Retaining existing customers is significantly more cost-effective than acquiring new ones. This project addresses customer retention by analyzing historical transactional data, segmenting customers based on purchasing habits, and identifying high-risk churn groups using Machine Learning.
+Retaining existing customers is significantly more cost-effective than acquiring new ones. In e-commerce, identifying customers at risk of leaving allows businesses to target them with personalized retention campaigns before they churn. 
 
-   +-----------------------------------+
-   |   Raw Data (online_retail_II.xlsx) |
-   +-----------------------------------+
-                     │
-                     ▼
-   +-----------------------------------+
-   | Data Cleaning & Feature Eng.      |
-   |  (Pandas, RFM Metrics, Segments)  |
-   +-----------------------------------+
-                     │
-                     ▼
-   +-----------------------------------+
-   | Model Training & Evaluation       |
-   |  (Random Forest & XGBoost)        |
-   +-----------------------------------+
-                     │
-                     ▼
-   +-----------------------------------+
-   | Streamlit Interactive Dashboard   |
-   +-----------------------------------+
+This project processes over 1 million raw transactional records, engineers granular customer-level behavioral metrics, segments customers into distinct purchasing cohorts, and utilizes supervised machine learning classifiers to predict churn probability with actionable feature importance rankings.
 
 ---
 
-## 🛠️ Key Features
+## 🛠️ Detailed Technical Features
 
-- **Data Cleaning & Engineering:** Cleaned over 1 million transaction records, removed cancellations/refunds, and calculated aggregate customer-level **Recency, Frequency, and Monetary (RFM)** features.
-- **Customer Segmentation:** Mapped customers into actionable behavioral segments (e.g., *Champions*, *Loyal Customers*, *At Risk*, *Hibernating*) using quantile scoring.
-- **Supervised Churn Modeling:** Trained **XGBoost** and **Random Forest** classifiers to predict customer churn probability.
-- **Feature Importance Analysis:** Evaluated feature impact using Scikit-Learn to determine primary churn drivers.
-- **Interactive Analytics Dashboard:** Built a responsive **Streamlit** web application for stakeholders to filter high-risk customer segments, review churn rates, and inspect raw customer records.
+- **Data Cleaning & Preprocessing:** Processed raw transactional data from the *Online Retail II* dataset using **Pandas**. Filtered out canceled orders, negative quantities, missing customer IDs, and non-retail adjustments to ensure data integrity.
+- **RFM Feature Engineering:** Aggregated line-item transactions to the customer level to compute core behavioral metrics:
+  - **Recency ($R$):** Days elapsed since the customer's last purchase relative to the dataset max date.
+  - **Frequency ($F$):** Total count of unique purchase transactions per customer.
+  - **Monetary Value ($M$):** Total gross expenditure across all transactions.
+- **Quantile Segmentation & Churn Labeling:** Assigned quantile scores ($1$–$5$) across RFM dimensions to map customers into actionable cohorts (*Champions*, *Loyal Customers*, *At Risk*, *Hibernating*, *About To Sleep*). Defined churn programmatically using an inactivity threshold (>90 days without a purchase).
+- **Supervised Churn Classification:** Trained and evaluated **XGBoost** and **Random Forest** algorithms to classify customer churn risk, evaluating metrics across Precision, Recall, and F1-Score.
+- **Feature Importance & Driver Analysis:** Extracted Gini importance and feature weights using Scikit-Learn to identify the exact behavioral drivers (e.g., Recency vs. Order Frequency) driving customer drop-off.
+- **Interactive Streamlit Dashboard:** Designed an executive web application featuring high-level KPI cards, interactive segment multi-filters, feature importance visual plots, and raw customer inspection tables.
 
 ---
 
-## 🚀 Tech Stack
+## 🚀 Tech Stack & Libraries
 
-- **Language:** Python
-- **Data Manipulation:** Pandas, NumPy
-- **Machine Learning:** Scikit-Learn, XGBoost, Joblib
+- **Programming Language:** Python 3.13
+- **Data Manipulation & Analysis:** Pandas, NumPy
+- **Machine Learning & Modeling:** Scikit-Learn, XGBoost, Joblib
 - **Data Visualization:** Matplotlib, Seaborn
-- **Dashboard Deployment:** Streamlit
+- **Web Application & UI:** Streamlit
+- **Dataset Source:** Online Retail II (Excel Data Sheet)
 
 ---
 
 ## 📁 Repository Structure
 
-cltv_project/
-├── .venv/                   # Python Virtual Environment
-├── online_retail_II.xlsx    # Raw E-Commerce Transaction Dataset
-├── retail_project.py        # Data cleaning, RFM calculation, and model training
-├── rfm_data.csv             # Processed dataset with RFM features & churn labels
-├── xgb_model.pkl            # Trained XGBoost Machine Learning Model
-├── app.py                   # Streamlit Web Application Dashboard
-└── README.md                # Project documentation
-
+- `app.py` — Main Streamlit application containing executive dashboard layout, interactive sidebars, and plotting logic.
+- `retail_project.py` — Core machine learning pipeline handling data ingestion, cleaning, RFM aggregation, model training, and artifact export.
+- `rfm_data.csv` — Feature-engineered dataset output storing customer-level RFM scores, segment labels, and binary churn targets.
+- `xgb_model.pkl` — Serialized pre-trained XGBoost classification model saved for fast loading in the web app.
+- `online_retail_II.xlsx` — Raw transactional e-commerce source dataset.
+- `README.md` — Project documentation and setup guide.
 
 ---
 
-## ⚙️ Installation & Usage
+## ⚙️ Installation & Setup Guide
 
 ### 1. Clone the Repository
-## ⚙️ Installation & Usage
+```bash
+git clone [https://github.com/Pokuaa30/Customerchurn_ltv.git](https://github.com/Pokuaa30/Customerchurn_ltv.git)
+cd Customerchurn_ltv
 
-### 1. Clone the Repository
 ```
-bash
-git clone https://github.com/YOUR_USERNAME/cltv_project.git
-cd cltv_project
-2. Create and Activate Virtual Environment
-Bash
-# Windows
+2. Set Up Virtual Environment
+Windows:
+```Bash
 python -m venv .venv
 .venv\Scripts\activate
+macOS / Linux:
 
-# macOS / Linux
+Bash
 python3 -m venv .venv
 source .venv/bin/activate
-
 3. Install Dependencies
 Bash
 pip install pandas numpy scikit-learn xgboost streamlit matplotlib seaborn joblib openpyxl
-4. Run the Data Pipeline & Train Models
+4. Run Pipeline & Launch Dashboard
+Train the machine learning pipeline:
+
 Bash
 python retail_project.py
-5. Launch the Streamlit Dashboard
+Launch the interactive Streamlit dashboard:
+
 Bash
 streamlit run app.py
+📈 Executive Dashboard Features
+The deployed dashboard provides stakeholders with immediate visibility into customer analytics:
 
-📈 Dashboard Preview
-The Streamlit interface provides real-time customer analytics:
+Executive Metrics: High-level overview of Total Customers, Churned Count, Overall Churn Rate (50.9%), and Average Monetary Value.
 
-Executive KPI Metrics: Total Customers, Churned Count, Churn Rate, and Average Monetary Value.
+Segment Risk Filtering: Multi-select control allowing users to isolate high-risk groups like Hibernating or About To Sleep.
 
-Interactive Risk Filter: Multiselect segment filters to isolate at-risk customer cohorts.
+Feature Importance Visuals: Graphical representation showing which behavioral factors contribute most to model predictions.
 
-Feature Importance Chart: Model feature scoring indicating key behavioral drivers.
-
-Data Inspection Table: Granular customer-level breakdown for targeted retention campaigns.
+Customer Inspection Table: Granular data viewer providing customer-level Recency, Frequency, Monetary, Segment, and Churn status for targeted marketing lists.
